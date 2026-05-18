@@ -1,30 +1,28 @@
-import LinkCard from "@/components/LinkCard";
-import { mockLinks } from "@/data/mockData";
+"use client";
 
-interface Link {
-  title: string;
-  url: string;
-  description: string;
-  folder: string;
-}
+import LinkCard from "@/components/LinkCard";
+import { useLinks } from "@/context/LinkContext";
 
 interface LinkGridProps {
-  links?: Link[];
+  folder?: string;
 }
 
-export default function LinkGrid({ links = mockLinks }: LinkGridProps) {
-  if (links.length === 0) {
+export default function LinkGrid({ folder }: LinkGridProps) {
+  const { links } = useLinks();
+  const filtered = folder ? links.filter((l) => l.folder === folder) : links;
+
+  if (filtered.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 text-[var(--text-sub)]">
-        <p className="text-sm">저장된 링크가 없어요</p>
+      <div className="flex items-center justify-center h-64">
+        <p className="text-sm text-[var(--text-sub)]">저장된 링크가 없어요</p>
       </div>
     );
   }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 p-6">
-      {links.map((link, i) => (
-        <LinkCard key={i} {...link} />
+      {filtered.map((link) => (
+        <LinkCard key={link.id} {...link} />
       ))}
     </div>
   );
