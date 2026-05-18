@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { FolderProvider } from "@/context/FolderContext";
 
 export const metadata: Metadata = {
   title: "한입 링크",
@@ -13,7 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className="h-full">
-      <body className="min-h-full flex flex-col antialiased">{children}</body>
+      <body className="min-h-full flex flex-col antialiased">
+          <FolderProvider>{children}</FolderProvider>
+        </body>
     </html>
   );
 }

@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { folders } from "@/data/mockData";
+import { useFolders } from "@/context/FolderContext";
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { folders } = useFolders();
 
   return (
     <aside className="w-52 shrink-0 border-r border-[var(--border)] bg-[var(--card-bg)] p-2 flex flex-col gap-0.5">

@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { folders } from "@/data/mockData";
+import { useFolders } from "@/context/FolderContext";
 
 export default function NewLinkForm() {
+  const { folders } = useFolders();
   const [url, setUrl] = useState("");
   const [folder, setFolder] = useState(folders[0]);
 

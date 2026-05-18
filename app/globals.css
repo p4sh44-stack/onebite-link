@@ -31,3 +31,7 @@ body {
 .btn-accent:hover {
   background: var(--accent-hover);
 }
+
+.btn-secondary:hover {
+  background: var(--hover-bg);
+}
