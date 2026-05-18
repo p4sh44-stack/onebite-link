@@ -35,3 +35,7 @@ body {
 .btn-secondary:hover {
   background: var(--hover-bg);
 }
+
+.btn-danger:hover {
+  background: #d94f4f;
+}
