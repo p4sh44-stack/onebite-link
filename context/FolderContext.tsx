@@ -7,12 +7,14 @@ interface FolderContextType {
   folders: string[];
   addFolder: (name: string) => void;
   deleteFolder: (name: string) => void;
+  renameFolder: (oldName: string, newName: string) => void;
 }
 
 const FolderContext = createContext<FolderContextType>({
   folders: initialFolders,
   addFolder: () => {},
   deleteFolder: () => {},
+  renameFolder: () => {},
 });
 
 export function FolderProvider({ children }: { children: React.ReactNode }) {
@@ -29,8 +31,15 @@ export function FolderProvider({ children }: { children: React.ReactNode }) {
     setFolders((prev) => prev.filter((f) => f !== name));
   }
 
+  function renameFolder(oldName: string, newName: string) {
+    const trimmed = newName.trim();
+    if (trimmed && trimmed !== oldName && !folders.includes(trimmed)) {
+      setFolders((prev) => prev.map((f) => (f === oldName ? trimmed : f)));
+    }
+  }
+
   return (
-    <FolderContext.Provider value={{ folders, addFolder, deleteFolder }}>
+    <FolderContext.Provider value={{ folders, addFolder, deleteFolder, renameFolder }}>
       {children}
     </FolderContext.Provider>
   );
