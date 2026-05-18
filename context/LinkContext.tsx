@@ -16,6 +16,7 @@ interface LinkContextType {
   links: LinkItem[];
   addLink: (link: Omit<LinkItem, "id">) => void;
   deleteLink: (id: string) => void;
+  updateLink: (id: string, updates: Partial<Omit<LinkItem, "id">>) => void;
 }
 
 const initialLinks: LinkItem[] = mockLinks.map((l, i) => ({ ...l, id: String(i) }));
@@ -24,6 +25,7 @@ const LinkContext = createContext<LinkContextType>({
   links: initialLinks,
   addLink: () => {},
   deleteLink: () => {},
+  updateLink: () => {},
 });
 
 export function LinkProvider({ children }: { children: React.ReactNode }) {
@@ -37,8 +39,12 @@ export function LinkProvider({ children }: { children: React.ReactNode }) {
     setLinks((prev) => prev.filter((l) => l.id !== id));
   }
 
+  function updateLink(id: string, updates: Partial<Omit<LinkItem, "id">>) {
+    setLinks((prev) => prev.map((l) => (l.id === id ? { ...l, ...updates } : l)));
+  }
+
   return (
-    <LinkContext.Provider value={{ links, addLink, deleteLink }}>
+    <LinkContext.Provider value={{ links, addLink, deleteLink, updateLink }}>
       {children}
     </LinkContext.Provider>
   );
