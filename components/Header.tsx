@@ -2,15 +2,18 @@ import Link from "next/link";
 
 export default function Header() {
   return (
-    <header className="flex items-center justify-between px-6 py-4 border-b bg-white shrink-0">
-      <Link href="/" className="text-xl font-bold text-indigo-600">
+    <header className="flex items-center justify-between px-4 h-12 border-b border-[var(--border)] bg-[var(--card-bg)] shrink-0 sticky top-0 z-10">
+      <Link href="/" className="text-base font-semibold text-[var(--text)]">
         한입 링크
       </Link>
       <Link
         href="/new"
-        className="flex items-center gap-1 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 active:scale-95 transition-all"
+        className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--accent)] text-white rounded-md text-sm font-medium btn-accent transition-colors"
       >
-        + 새 링크
+        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+        </svg>
+        새 링크
       </Link>
     </header>
   );

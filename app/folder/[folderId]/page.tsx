@@ -13,7 +13,7 @@ export default async function FolderPage({
   const filteredLinks = mockLinks.filter((link) => link.folder === folderName);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col h-screen bg-[var(--bg)]">
       <Header />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />

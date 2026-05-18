@@ -10,21 +10,21 @@ export default function NewLinkForm() {
   return (
     <div className="max-w-lg w-full flex flex-col gap-5">
       <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-medium text-gray-700">링크 URL</label>
+        <label className="text-sm font-medium text-[var(--text)]">링크 URL</label>
         <input
           type="url"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           placeholder="https://example.com"
-          className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          className="px-3 py-2 border border-[var(--border)] rounded-md text-sm text-[var(--text)] placeholder:text-[var(--placeholder)] bg-[var(--card-bg)] focus:outline-none focus:border-[var(--accent)] transition-colors"
         />
       </div>
       <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-medium text-gray-700">폴더</label>
+        <label className="text-sm font-medium text-[var(--text)]">폴더</label>
         <select
           value={folder}
           onChange={(e) => setFolder(e.target.value)}
-          className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          className="px-3 py-2 border border-[var(--border)] rounded-md text-sm text-[var(--text)] bg-[var(--card-bg)] focus:outline-none focus:border-[var(--accent)] transition-colors"
         >
           {folders.map((f) => (
             <option key={f} value={f}>
@@ -35,7 +35,7 @@ export default function NewLinkForm() {
       </div>
       <button
         disabled={!url.trim()}
-        className="px-6 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 transition-all"
+        className="px-4 py-2 bg-[var(--accent)] text-white rounded-md text-sm font-medium btn-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors w-fit"
       >
         저장
       </button>
