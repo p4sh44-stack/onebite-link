@@ -35,7 +35,7 @@ export default function Sidebar() {
   const pathname = usePathname();
   const { folders, deleteFolder, renameFolder } = useFolders();
 
-  const [folderToDelete, setFolderToDelete] = useState<string | null>(null);
+  const [folderToDelete, setFolderToDelete] = useState<Folder | null>(null);
   const [folderToRename, setFolderToRename] = useState<Folder | null>(null);
   const [newName, setNewName] = useState("");
   const renameInputRef = useRef<HTMLInputElement>(null);
@@ -47,9 +47,9 @@ export default function Sidebar() {
     }
   }, [folderToRename]);
 
-  function handleConfirmDelete() {
+  async function handleConfirmDelete() {
     if (folderToDelete) {
-      deleteFolder(folderToDelete);
+      await deleteFolder(folderToDelete.id);
       setFolderToDelete(null);
     }
   }
@@ -108,7 +108,7 @@ export default function Sidebar() {
                     <PencilIcon />
                   </button>
                   <button
-                    onClick={() => setFolderToDelete(folder.name)}
+                    onClick={() => setFolderToDelete(folder)}
                     className="p-1 rounded text-[var(--text-sub)] hover:text-[var(--error)] transition-colors"
                     aria-label={`${folder.name} 폴더 삭제`}
                   >
@@ -166,7 +166,7 @@ export default function Sidebar() {
           <div className="relative z-10 bg-[var(--card-bg)] border border-[var(--border)] rounded-lg p-6 w-80 flex flex-col gap-4 shadow-lg">
             <h3 className="text-base font-semibold text-[var(--text)]">폴더 삭제</h3>
             <p className="text-sm text-[var(--text-sub)]">
-              <span className="font-medium text-[var(--text)]">"{folderToDelete}"</span> 폴더를 정말 삭제할까요?
+              <span className="font-medium text-[var(--text)]">"{folderToDelete?.name}"</span> 폴더를 정말 삭제할까요?
             </p>
             <div className="flex gap-2 justify-end">
               <button
