@@ -60,12 +60,14 @@ export default function LinkCard({ id, title, url, description, folder, thumbnai
     setShowEditModal(true);
   }
 
-  function handleSaveEdit() {
+  async function handleSaveEdit() {
     if (!editTitle.trim()) return;
-    updateLink(id, {
+    const selectedFolder = folders.find((f) => f.name === editFolder);
+    await updateLink(id, {
       title: editTitle.trim(),
       description: editDescription.trim(),
       folder: editFolder,
+      folder_id: selectedFolder?.id ?? null,
     });
     setShowEditModal(false);
   }
@@ -192,7 +194,7 @@ export default function LinkCard({ id, title, url, description, folder, thumbnai
                 취소
               </button>
               <button
-                onClick={() => { deleteLink(id); setShowDeleteModal(false); }}
+                onClick={async () => { await deleteLink(id); setShowDeleteModal(false); }}
                 className="px-4 py-1.5 bg-[var(--error)] text-white rounded-md text-sm font-medium btn-danger transition-colors"
               >
                 삭제

@@ -16,15 +16,15 @@ export interface LinkItem {
 interface LinkContextType {
   links: LinkItem[];
   addLink: (link: Omit<LinkItem, "id">) => Promise<void>;
-  deleteLink: (id: number) => void;
-  updateLink: (id: number, updates: Partial<Omit<LinkItem, "id">>) => void;
+  deleteLink: (id: number) => Promise<void>;
+  updateLink: (id: number, updates: Partial<Omit<LinkItem, "id">>) => Promise<void>;
 }
 
 const LinkContext = createContext<LinkContextType>({
   links: [],
   addLink: async () => {},
-  deleteLink: () => {},
-  updateLink: () => {},
+  deleteLink: async () => {},
+  updateLink: async () => {},
 });
 
 type SupabaseLinkRow = {
@@ -79,12 +79,30 @@ export function LinkProvider({ children }: { children: React.ReactNode }) {
     if (data) setLinks((prev) => [rowToLinkItem(data as SupabaseLinkRow), ...prev]);
   }
 
-  function deleteLink(id: number) {
+  async function deleteLink(id: number) {
+    const supabase = createClient();
+    await supabase.from("links").delete().eq("id", id);
     setLinks((prev) => prev.filter((l) => l.id !== id));
   }
 
-  function updateLink(id: number, updates: Partial<Omit<LinkItem, "id">>) {
-    setLinks((prev) => prev.map((l) => (l.id === id ? { ...l, ...updates } : l)));
+  async function updateLink(id: number, updates: Partial<Omit<LinkItem, "id">>) {
+    const supabase = createClient();
+    const dbUpdates: Record<string, unknown> = {};
+    if (updates.title !== undefined) dbUpdates.title = updates.title;
+    if (updates.description !== undefined) dbUpdates.description = updates.description || null;
+    if (updates.folder_id !== undefined) dbUpdates.folder_id = updates.folder_id;
+
+    const { data } = await supabase
+      .from("links")
+      .update(dbUpdates)
+      .eq("id", id)
+      .select("*, folders(name)")
+      .single();
+    if (data) {
+      setLinks((prev) =>
+        prev.map((l) => (l.id === id ? rowToLinkItem(data as SupabaseLinkRow) : l))
+      );
+    }
   }
 
   return (
