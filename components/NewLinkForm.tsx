@@ -11,7 +11,7 @@ export default function NewLinkForm() {
   const router = useRouter();
 
   const [url, setUrl] = useState("");
-  const [folder, setFolder] = useState(folders[0] ?? "");
+  const [folderId, setFolderId] = useState<number | null>(folders[0]?.id ?? null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -26,11 +26,14 @@ export default function NewLinkForm() {
       const res = await fetch(`/api/og?url=${encodeURIComponent(trimmed)}`);
       const data = await res.json();
 
-      addLink({
+      const selectedFolder = folders.find((f) => f.id === folderId);
+
+      await addLink({
         title: data.title || trimmed,
         url: data.url || trimmed,
         description: data.description || "",
-        folder,
+        folder: selectedFolder?.name ?? "",
+        folder_id: folderId,
         thumbnail: data.image || undefined,
       });
 
@@ -57,13 +60,14 @@ export default function NewLinkForm() {
       <div className="flex flex-col gap-1.5">
         <label className="text-sm font-medium text-[var(--text)]">폴더</label>
         <select
-          value={folder}
-          onChange={(e) => setFolder(e.target.value)}
+          value={folderId ?? ""}
+          onChange={(e) => setFolderId(e.target.value ? Number(e.target.value) : null)}
           className="px-3 py-2 border border-[var(--border)] rounded-md text-sm text-[var(--text)] bg-[var(--card-bg)] focus:outline-none focus:border-[var(--accent)] transition-colors"
         >
+          <option value="">폴더 없음</option>
           {folders.map((f) => (
-            <option key={f} value={f}>
-              {f}
+            <option key={f.id} value={f.id}>
+              {f.name}
             </option>
           ))}
         </select>

@@ -6,11 +6,12 @@ import { useLinks } from "@/context/LinkContext";
 import { useFolders } from "@/context/FolderContext";
 
 interface LinkCardProps {
-  id: string;
+  id: number;
   title: string;
   url: string;
   description: string;
   folder: string;
+  folder_id: number | null;
   thumbnail?: string;
 }
 
@@ -134,7 +135,7 @@ export default function LinkCard({ id, title, url, description, folder, thumbnai
                 className="px-3 py-2 border border-[var(--border)] rounded-md text-sm text-[var(--text)] bg-[var(--bg)] focus:outline-none focus:border-[var(--accent)] transition-colors"
               >
                 {folders.map((f) => (
-                  <option key={f} value={f}>{f}</option>
+                  <option key={f.id} value={f.name}>{f.name}</option>
                 ))}
               </select>
             </div>
