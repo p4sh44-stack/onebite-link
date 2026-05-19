@@ -3,12 +3,17 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 
+export interface Folder {
+  id: number;
+  name: string;
+}
+
 interface FolderContextType {
-  folders: string[];
+  folders: Folder[];
   isAddingFolder: boolean;
   addFolder: (name: string) => Promise<void>;
   deleteFolder: (name: string) => void;
-  renameFolder: (oldName: string, newName: string) => void;
+  renameFolder: (id: number, newName: string) => Promise<void>;
 }
 
 const FolderContext = createContext<FolderContextType>({
@@ -16,21 +21,21 @@ const FolderContext = createContext<FolderContextType>({
   isAddingFolder: false,
   addFolder: async () => {},
   deleteFolder: () => {},
-  renameFolder: () => {},
+  renameFolder: async () => {},
 });
 
 export function FolderProvider({ children }: { children: React.ReactNode }) {
-  const [folders, setFolders] = useState<string[]>([]);
+  const [folders, setFolders] = useState<Folder[]>([]);
   const [isAddingFolder, setIsAddingFolder] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
     supabase
       .from("folders")
-      .select("name")
+      .select("id, name")
       .order("created_at", { ascending: true })
       .then(({ data }) => {
-        if (data) setFolders(data.map((f: { name: string }) => f.name));
+        if (data) setFolders(data as Folder[]);
       });
   }, []);
 
@@ -43,22 +48,32 @@ export function FolderProvider({ children }: { children: React.ReactNode }) {
       const { data } = await supabase
         .from("folders")
         .insert({ name: trimmed })
-        .select("name")
+        .select("id, name")
         .single();
-      if (data) setFolders((prev) => [...prev, data.name]);
+      if (data) setFolders((prev) => [...prev, data as Folder]);
     } finally {
       setIsAddingFolder(false);
     }
   }
 
   function deleteFolder(name: string) {
-    setFolders((prev) => prev.filter((f) => f !== name));
+    setFolders((prev) => prev.filter((f) => f.name !== name));
   }
 
-  function renameFolder(oldName: string, newName: string) {
+  async function renameFolder(id: number, newName: string) {
     const trimmed = newName.trim();
-    if (trimmed && trimmed !== oldName && !folders.includes(trimmed)) {
-      setFolders((prev) => prev.map((f) => (f === oldName ? trimmed : f)));
+    if (!trimmed) return;
+    const supabase = createClient();
+    const { data } = await supabase
+      .from("folders")
+      .update({ name: trimmed })
+      .eq("id", id)
+      .select("id, name")
+      .single();
+    if (data) {
+      setFolders((prev) =>
+        prev.map((f) => (f.id === id ? (data as Folder) : f))
+      );
     }
   }
 

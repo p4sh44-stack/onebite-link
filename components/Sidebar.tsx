@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
-import { useFolders } from "@/context/FolderContext";
+import { useFolders, Folder } from "@/context/FolderContext";
 
 function PencilIcon() {
   return (
@@ -36,13 +36,13 @@ export default function Sidebar() {
   const { folders, deleteFolder, renameFolder } = useFolders();
 
   const [folderToDelete, setFolderToDelete] = useState<string | null>(null);
-  const [folderToRename, setFolderToRename] = useState<string | null>(null);
+  const [folderToRename, setFolderToRename] = useState<Folder | null>(null);
   const [newName, setNewName] = useState("");
   const renameInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (folderToRename !== null) {
-      setNewName(folderToRename);
+      setNewName(folderToRename.name);
       setTimeout(() => renameInputRef.current?.focus(), 0);
     }
   }, [folderToRename]);
@@ -54,9 +54,9 @@ export default function Sidebar() {
     }
   }
 
-  function handleConfirmRename() {
+  async function handleConfirmRename() {
     if (folderToRename && newName.trim()) {
-      renameFolder(folderToRename, newName);
+      await renameFolder(folderToRename.id, newName);
       setFolderToRename(null);
     }
   }
@@ -84,10 +84,10 @@ export default function Sidebar() {
             폴더
           </p>
           {folders.map((folder) => {
-            const href = `/folder/${encodeURIComponent(folder)}`;
+            const href = `/folder/${encodeURIComponent(folder.name)}`;
             const isActive = pathname === href;
             return (
-              <div key={folder} className="group relative flex items-center">
+              <div key={folder.id} className="group relative flex items-center">
                 <Link
                   href={href}
                   className={`flex-1 flex items-center gap-2 px-3 py-1.5 pr-16 rounded-md text-sm transition-colors ${
@@ -97,20 +97,20 @@ export default function Sidebar() {
                   }`}
                 >
                   <span className="text-base leading-none">📁</span>
-                  <span className="truncate">{folder}</span>
+                  <span className="truncate">{folder.name}</span>
                 </Link>
                 <div className="absolute right-1.5 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => setFolderToRename(folder)}
                     className="p-1 rounded text-[var(--text-sub)] hover:text-[var(--accent)] transition-colors"
-                    aria-label={`${folder} 폴더 이름 수정`}
+                    aria-label={`${folder.name} 폴더 이름 수정`}
                   >
                     <PencilIcon />
                   </button>
                   <button
-                    onClick={() => setFolderToDelete(folder)}
+                    onClick={() => setFolderToDelete(folder.name)}
                     className="p-1 rounded text-[var(--text-sub)] hover:text-[var(--error)] transition-colors"
-                    aria-label={`${folder} 폴더 삭제`}
+                    aria-label={`${folder.name} 폴더 삭제`}
                   >
                     <TrashIcon />
                   </button>
@@ -147,7 +147,7 @@ export default function Sidebar() {
               </button>
               <button
                 onClick={handleConfirmRename}
-                disabled={!newName.trim() || newName.trim() === folderToRename}
+                disabled={!newName.trim() || newName.trim() === folderToRename?.name}
                 className="px-4 py-1.5 bg-[var(--accent)] text-white rounded-md text-sm font-medium btn-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 저장
