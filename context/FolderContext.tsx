@@ -1,29 +1,53 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
-import { folders as initialFolders } from "@/data/mockData";
+import { createContext, useContext, useState, useEffect } from "react";
+import { createClient } from "@/utils/supabase/client";
 
 interface FolderContextType {
   folders: string[];
-  addFolder: (name: string) => void;
+  isAddingFolder: boolean;
+  addFolder: (name: string) => Promise<void>;
   deleteFolder: (name: string) => void;
   renameFolder: (oldName: string, newName: string) => void;
 }
 
 const FolderContext = createContext<FolderContextType>({
-  folders: initialFolders,
-  addFolder: () => {},
+  folders: [],
+  isAddingFolder: false,
+  addFolder: async () => {},
   deleteFolder: () => {},
   renameFolder: () => {},
 });
 
 export function FolderProvider({ children }: { children: React.ReactNode }) {
-  const [folders, setFolders] = useState<string[]>(initialFolders);
+  const [folders, setFolders] = useState<string[]>([]);
+  const [isAddingFolder, setIsAddingFolder] = useState(false);
 
-  function addFolder(name: string) {
+  useEffect(() => {
+    const supabase = createClient();
+    supabase
+      .from("folders")
+      .select("name")
+      .order("created_at", { ascending: true })
+      .then(({ data }) => {
+        if (data) setFolders(data.map((f: { name: string }) => f.name));
+      });
+  }, []);
+
+  async function addFolder(name: string) {
     const trimmed = name.trim();
-    if (trimmed && !folders.includes(trimmed)) {
-      setFolders((prev) => [...prev, trimmed]);
+    if (!trimmed || isAddingFolder) return;
+    setIsAddingFolder(true);
+    try {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("folders")
+        .insert({ name: trimmed })
+        .select("name")
+        .single();
+      if (data) setFolders((prev) => [...prev, data.name]);
+    } finally {
+      setIsAddingFolder(false);
     }
   }
 
@@ -39,7 +63,7 @@ export function FolderProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <FolderContext.Provider value={{ folders, addFolder, deleteFolder, renameFolder }}>
+    <FolderContext.Provider value={{ folders, isAddingFolder, addFolder, deleteFolder, renameFolder }}>
       {children}
     </FolderContext.Provider>
   );

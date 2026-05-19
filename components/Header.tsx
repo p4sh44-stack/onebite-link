@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import { useFolders } from "@/context/FolderContext";
 
 export default function Header() {
-  const { addFolder } = useFolders();
+  const { addFolder, isAddingFolder } = useFolders();
   const [modalOpen, setModalOpen] = useState(false);
   const [folderName, setFolderName] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -17,9 +17,9 @@ export default function Header() {
     }
   }, [modalOpen]);
 
-  function handleSave() {
-    if (!folderName.trim()) return;
-    addFolder(folderName);
+  async function handleSave() {
+    if (!folderName.trim() || isAddingFolder) return;
+    await addFolder(folderName);
     setModalOpen(false);
   }
 
@@ -82,10 +82,10 @@ export default function Header() {
               </button>
               <button
                 onClick={handleSave}
-                disabled={!folderName.trim()}
+                disabled={!folderName.trim() || isAddingFolder}
                 className="px-4 py-1.5 bg-[var(--accent)] text-white rounded-md text-sm font-medium btn-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
-                저장
+                {isAddingFolder ? "저장 중..." : "저장"}
               </button>
             </div>
           </div>
