@@ -100,6 +100,15 @@ export default function LoginPage() {
             </button>
 
             <p className="text-center text-sm text-[var(--text-sub)]">
+              <Link
+                href="/forgot-password"
+                className="text-[var(--accent)] hover:underline transition-colors"
+              >
+                비밀번호를 잊으셨나요?
+              </Link>
+            </p>
+
+            <p className="text-center text-sm text-[var(--text-sub)]">
               계정이 없으신가요?{" "}
               <Link
                 href="/signup"
