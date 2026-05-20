@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
 
 function mapErrorToKorean(message: string): string {
@@ -30,6 +31,14 @@ export default function LoginPage() {
   function showToast(msg: string) {
     setToast(msg);
     setTimeout(() => setToast(null), 3000);
+  }
+
+  async function handleKakaoLogin() {
+    const supabase = createClient();
+    await supabase.auth.signInWithOAuth({
+      provider: "kakao",
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
+    });
   }
 
   async function handleLogin() {
@@ -97,6 +106,23 @@ export default function LoginPage() {
               className="w-full py-2 bg-[var(--accent)] text-white rounded-md text-sm font-medium btn-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors mt-2"
             >
               {loading ? "처리 중..." : "로그인"}
+            </button>
+
+            <div className="flex items-center gap-3">
+              <div className="flex-1 h-px bg-[var(--border)]" />
+              <span className="text-xs text-[var(--placeholder)]">또는</span>
+              <div className="flex-1 h-px bg-[var(--border)]" />
+            </div>
+
+            <button type="button" onClick={handleKakaoLogin} className="w-full">
+              <Image
+                src="/kakao_login_large_wide.png"
+                alt="카카오 로그인"
+                width={0}
+                height={0}
+                sizes="100%"
+                className="w-full h-auto rounded-md"
+              />
             </button>
 
             <p className="text-center text-sm text-[var(--text-sub)]">
