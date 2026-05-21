@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 
+
 function mapErrorToKorean(message: string): string {
   if (message.includes("already registered") || message.includes("already been registered")) {
     return "이미 사용 중인 이메일입니다.";
@@ -128,6 +129,15 @@ export default function SignupPage() {
                 className="text-[var(--accent)] hover:underline transition-colors"
               >
                 로그인
+              </Link>
+            </p>
+
+            <p className="text-center text-xs text-[var(--placeholder)]">
+              <Link
+                href="/privacy"
+                className="hover:text-[var(--text-sub)] hover:underline transition-colors"
+              >
+                개인정보 처리방침
               </Link>
             </p>
           </div>

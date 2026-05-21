@@ -136,6 +136,12 @@ export default function Sidebar() {
           </svg>
           로그아웃
         </button>
+        <Link
+          href="/privacy"
+          className="px-3 py-1 text-xs text-[var(--placeholder)] hover:text-[var(--text-sub)] transition-colors"
+        >
+          개인정보 처리방침
+        </Link>
       </aside>
 
       {folderToRename !== null && (
