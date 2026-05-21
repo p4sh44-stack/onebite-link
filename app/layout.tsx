@@ -4,8 +4,19 @@ import { FolderProvider } from "@/context/FolderContext";
 import { LinkProvider } from "@/context/LinkContext";
 
 export const metadata: Metadata = {
-  title: "한입 링크",
+  title: {
+    default: "한입 링크",
+    template: "%s | 한입 링크",
+  },
   description: "나만의 링크 북마크 앱",
+  icons: {
+    icon: "/favicon.ico",
+  },
+  openGraph: {
+    title: "한입 링크",
+    description: "나만의 링크 북마크 앱",
+    images: [{ url: "/thumbnail.png" }],
+  },
 };
 
 export default function RootLayout({
