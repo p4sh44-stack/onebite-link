@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { useFolders } from "@/context/FolderContext";
 
-export default function Header() {
+export default function Header({ onMenuToggle }: { onMenuToggle?: () => void }) {
   const { addFolder, isAddingFolder } = useFolders();
   const [modalOpen, setModalOpen] = useState(false);
   const [folderName, setFolderName] = useState("");
@@ -31,9 +31,20 @@ export default function Header() {
   return (
     <>
       <header className="flex items-center justify-between px-4 h-12 border-b border-[var(--border)] bg-[var(--card-bg)] shrink-0 sticky top-0 z-10">
-        <Link href="/" className="text-base font-semibold text-[var(--text)]">
-          한입 링크
-        </Link>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onMenuToggle}
+            className="md:hidden p-1.5 rounded-md text-[var(--text-sub)] hover:text-[var(--text)] hover:bg-[var(--hover-bg)] transition-colors"
+            aria-label="메뉴 열기/닫기"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <Link href="/" className="text-base font-semibold text-[var(--text)]">
+            한입 링크
+          </Link>
+        </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setModalOpen(true)}

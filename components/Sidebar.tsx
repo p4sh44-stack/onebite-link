@@ -32,7 +32,13 @@ function TrashIcon() {
   );
 }
 
-export default function Sidebar() {
+export default function Sidebar({
+  isOpen = false,
+  onClose,
+}: {
+  isOpen?: boolean;
+  onClose?: () => void;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const { folders, deleteFolder, renameFolder } = useFolders();
@@ -76,7 +82,18 @@ export default function Sidebar() {
 
   return (
     <>
-      <aside className="w-52 shrink-0 border-r border-[var(--border)] bg-[var(--card-bg)] p-2 flex flex-col gap-0.5">
+      {isOpen && (
+        <div
+          className="fixed top-12 inset-x-0 bottom-0 z-30 bg-black/30 md:hidden"
+          onClick={onClose}
+        />
+      )}
+      <aside
+        className={`w-52 shrink-0 border-r border-[var(--border)] bg-[var(--card-bg)] p-2 flex flex-col gap-0.5 overflow-y-auto
+          fixed top-12 bottom-0 left-0 z-40 transition-transform duration-200 ease-in-out
+          md:static md:top-auto md:bottom-auto md:z-auto md:translate-x-0
+          ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
+      >
         <Link
           href="/"
           className={`px-3 py-1.5 rounded-md text-sm transition-colors ${
